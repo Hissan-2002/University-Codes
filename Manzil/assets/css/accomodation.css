@@ -1,0 +1,80 @@
+
+
+html{
+    font-size: none;
+}
+
+.body {
+    font-family: Arial, Helvetica, sans-serif !important;
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    font-size: 2rem;
+}
+.cont {
+    background-color: hsla(0, 0%, 69%, 0.699);
+    position: relative;
+    display: grid;
+    grid-template-columns: 300px 600px;
+    border-radius: 5px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.356);
+}
+.cont img {
+    width: 300px;
+    height: 300px;
+    border-radius: 5px 0 0 5px;
+}
+.cont .btnn {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    background-color: #fc9400;
+    color: #fff;
+    padding: 22px 45px;
+    font-size: 2rem;
+    text-transform: uppercase;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.294);
+}
+.cont .btnn i {
+    margin-left: 20px;
+    font-size: 1.5rem;
+}
+.cont__text {
+    padding: 40px 40px 0;
+}
+.cont__text h1 {
+    color: #351897;
+    font-weight: 400;
+}
+.cont__text .cont__text__star span {
+    font-size: 0.8rem;
+    color: #ffa800;
+    margin: -5px 0 20px;
+}
+.cont__text p {
+    font-size: 1.4rem;
+}
+.cont__text .cont__text__timing {
+    display: flex;
+    margin: 20px 0 10px;
+}
+.cont__text .cont__text__timing .cont__text__timing_time {
+    margin-right: 40px;
+}
+.cont__text .cont__text__timing h2 {
+    margin-bottom: 5px;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #818189;
+}
+.cont__text .cont__text__timing p {
+    color: #351897;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
