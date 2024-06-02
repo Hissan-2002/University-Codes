@@ -1,0 +1,446 @@
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <windows.h>
+#include <fstream>
+#include <cstdlib>
+
+using namespace std;
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+												// GLOBAL VARIABLES
+bool win = true;
+const int sdkS = 9;	// sudoku Size
+
+int a[sdkS][sdkS] = { 0 };
+int c[sdkS][sdkS] = { 0 };
+int fix[sdkS][sdkS] = { 0 };
+int sudoku[sdkS][sdkS] = { 0 };
+int curr[sdkS][sdkS];
+												// FUNCTION DECLARATIONS
+void SaveGame(char savesL);
+void LoadGame(char saveL);
+void validType(int& num);
+
+void display_game();
+void drawLine(int length);
+void displayValues(int line);
+
+void gameMenu();
+void addValue(int x, int y, int v);
+void showSolution();
+void check();
+
+void genSolved();
+void generateGame(int hints);
+bool solve(int x, int y);
+bool can_insert(int x, int y, int value);
+bool next(int x, int y);
+
+void newGame(int game);
+void MainMenu();
+												// MAIN FUNCTION
+
+int main()
+{
+
+	MainMenu();
+	return 0;
+}
+												// FUNCTION DEFINITONS
+// console main menu
+void MainMenu()
+{
+	system("cls");
+	int read = 0;
+	char savesL;
+
+	SetConsoleTextAttribute(hConsole, 11);
+	cout << "\nMAIN MENU\n\n";
+	SetConsoleTextAttribute(hConsole, 7);
+	cout << "[1] New Game\n" << "[2] Load game\n" << "[3] Exit"<< "\n\nEnter choice: ";
+
+menu_ip:
+	cin >> read;
+	validType(read);
+	if (read < 1 || read>3) {
+		cout << "\nInvalid choice! Please choose from the given options\n\n";
+		goto menu_ip;
+	}
+
+	switch (read)
+	{
+	case 1:
+		newGame(31);
+	case 2:
+	{
+	save_menu:
+		cout << "Select save slot [1][2][3] : ";
+		cin >> savesL;
+		LoadGame(savesL);
+
+	}
+	case 3:
+		exit(0);
+	}
+
+}
+
+void newGame(int game)
+{
+	system("cls");
+	genSolved();
+	generateGame(game);
+	display_game();
+
+}
+
+// generating solved sudoku board
+void genSolved() {	
+	int x_axis = 0;
+	int y_axis = 0;
+	int value = 0;
+	srand(time(NULL));
+	for (int i = 0; i < 5; i++)
+	{
+		x_axis = rand() % 9 + 0;
+		y_axis = rand() % 9 + 0;
+		sudoku[x_axis][y_axis] = rand() % 9 + 0;
+	}
+	for (int i = 0; i < sdkS; i++)
+		for (int j = 0; j < sdkS; j++)
+			curr[i][j] = sudoku[i][j];
+	if (solve(0, 0)) {
+		for (int i = 0; i < sdkS; i++) {
+			for (int j = 0; j < sdkS; j++) {
+				a[i][j] = curr[i][j];
+			}
+		}
+	}
+}
+
+void generateGame(int hints)	// generates sudoku with blank spaces (0) for user	
+{
+	int x_axis = 0;
+	int y_axis = 0;
+	srand(time(NULL));
+
+	for (int i = 0; i < hints; i++)
+	{
+		x_axis = rand() % 9 + 0;
+		y_axis = rand() % 9 + 0;
+
+		fix[x_axis][y_axis] = a[x_axis][y_axis];
+	}
+
+	for (int i = 0; i < sdkS; i++)
+	{
+		for (int j = 0; j < sdkS; j++)
+		{
+			c[i][j] = fix[i][j];
+		}
+	}
+}
+
+bool solve(int x, int y) {
+	if (sudoku[x][y] == 0) {
+		for (int i = 1; i <= sdkS; i++) {
+			if (can_insert(x, y, i)) {
+				curr[x][y] = i;
+				if (next(x, y)) return true;
+			}
+		} curr[x][y] = 0; return false;
+	} return next(x, y);
+}
+
+bool can_insert(int x, int y, int value) {
+	for (int i = 0; i < sdkS; i++) {
+		if (value == curr[x][i] || value == curr[i][y] ||
+			value == curr[x / 3 * 3 + i % 3][y / 3 * 3 + i / 3]) return false;
+	} return true;
+}
+
+bool next(int x, int y) {
+	if (x == 8 && y == 8) return true;
+	else if (x == 8) return solve(0, y + 1);
+	else return solve(x + 1, y);
+}
+
+void validType(int& num) {
+	while (cin.fail())
+	{
+		cin.clear();
+		cin.ignore(INT_MAX, '\n');
+		cout << "Invalid input! Please only enter numeric value:\n";
+		cin >> num;
+	}
+}
+
+// console outputs
+void drawLine(int length)
+{
+	for (int i = 0; i < length; i++)
+	{
+		cout << "=";
+	}
+	cout << endl;
+}
+
+void displayValues(int line)
+{
+	SetConsoleTextAttribute(hConsole, 7);
+
+	for (int i = 0; i < 3; i++)
+	{
+		
+		if(fix[i][line]==0)
+		{
+			SetConsoleTextAttribute(hConsole, 11);
+			if (c[i][line] == 0)
+				cout << "# ";
+			else
+				cout << c[i][line] << " ";
+		}
+		else
+			cout << c[i][line] << " ";
+		SetConsoleTextAttribute(hConsole, 7);
+	}
+	cout << "| ";
+	for (int i = 3; i < 6; i++)
+	{
+
+		if (fix[i][line] == 0)
+		{
+			SetConsoleTextAttribute(hConsole, 11);
+			if (c[i][line] == 0)
+				cout << "# ";
+			else
+				cout << c[i][line] << " ";
+		}
+		else
+			cout << c[i][line] << " ";
+		SetConsoleTextAttribute(hConsole, 7);
+	}
+	cout << "| ";
+	for (int i = 6; i < 9; i++)
+	{
+
+		if (fix[i][line] == 0)
+		{
+			SetConsoleTextAttribute(hConsole, 11);
+			if (c[i][line] == 0)
+				cout << "# ";
+			else
+				cout << c[i][line] << " ";
+		}
+		else
+			cout << c[i][line] << " ";
+		SetConsoleTextAttribute(hConsole, 7);
+	}
+
+}
+
+// game working
+void display_game()											// PRINT GAME ON SCREEN
+{
+	int xcol = 12, ycol = 14;
+	SetConsoleTextAttribute(hConsole, ycol);
+	cout << " y|";
+	SetConsoleTextAttribute(hConsole, xcol);
+	cout << "x| 0 1 2 | 3 4 5 | 6 7 8" << endl;
+	SetConsoleTextAttribute(hConsole, 7);
+	
+	drawLine(30);
+	for (int i = 0; i < 9; i++) {
+		SetConsoleTextAttribute(hConsole, ycol);
+		cout << "  " << i << "|| "; displayValues(i); cout << endl;
+		if ((i + 1) % 3 == 0)
+			drawLine(30);
+	}
+
+	int read = 0, x=0, y, v;
+	
+		cout << "\n~ # -> blank space ~\n";
+		/cout << endl << "[1] Add Value\n[2] Check\n[3] Solution\n[4] Exit\n[5] Save Game\nEnter choice: ";/
+		cout << "\n(Enter [-1] in 'X coordinate' to access the game menu (Check, Show Solution, Exit, Save Game) )\n\n";
+
+	addelem_menu:
+		cout << "X coordinate: ";
+		cin >> x;
+		if (x == -1) {
+			gameMenu();
+	}
+		validType(x);
+		cout << "Y coordinate: ";
+		cin >> y;
+		validType(y);
+		cout << "Value: ";
+		cin >> v;
+		validType(v);
+
+		if (x < 0 || x>8 || y < 0 || y>8 || v < 1 || v>9) {
+			cout << "\nInvalid input! Please choose correct coordinates (0-9) and/or a correct value (0-9)\n\n";
+			goto addelem_menu;
+		}
+		if (fix[x][y] != 0) {
+			cout << "\nInvalid input! You cannot change fixed values\n\n";
+			goto addelem_menu;
+		}
+
+		addValue(x, y, v);
+		display_game();
+
+}
+
+void gameMenu() {
+	system("cls");
+	int read;
+	SetConsoleTextAttribute(hConsole, 11);
+	cout << endl << "\n\nGAME MENU\n\n";
+	SetConsoleTextAttribute(hConsole, 7);
+	cout << "[1] Back to game\n[2] Check\n[3] Solution\n[4] Exit\n[5] Save Game\n\nEnter choice : ";
+
+menu2_ip:
+	cin >> read;
+	validType(read);
+	if (read < 1 || read>5) {
+		cout << "\nInvalid input! Please choose from the given options\n\n";
+		goto menu2_ip;
+	}
+
+	switch (read)
+	{
+	case 1:
+		system("cls");
+		display_game();
+		break;
+	case 2:
+		check();
+		break;
+	case 3:
+		showSolution();
+		system("cls");
+		display_game();
+		break;
+	case 4:
+		system("cls");
+		cout << "\nYou have exited the game\n";
+		exit(0);
+		break;
+	case 5:
+	{
+		char savesL;
+		cout << "Select save slot: [1][2][3] ";
+		cin >> savesL;
+		SaveGame(savesL);
+		
+		system("cls");
+		display_game();
+		break;
+	}
+	}
+}
+
+void addValue(int x,int y,int v)
+{
+	c[x][y] = v;
+	system("cls");
+
+}
+
+void showSolution()
+{
+	for (int i = 0; i < sdkS; i++)
+	{
+		for (int j = 0; j < sdkS; j++)
+		{
+			c[i][j] = a[i][j];
+		}
+	}
+}
+
+void check()
+{
+	for (int i = 0; i < sdkS; i++)
+	{
+		for (int j = 0; j < sdkS; j++)
+		{
+			if (c[i][j] != a[i][j])
+			{
+				win = false;
+			}
+		}
+	}
+	if (win == true)
+	{
+		system("cls");
+		cout << "YOU WIN" << endl;
+	}
+	else
+	{
+		system("cls");
+		cout << "GAME OVER\n\nYou have lost the game." << endl;
+	}
+	int read = 0;
+
+	cout << "\n[4] Exit" << endl;
+	cin >> read;
+	validType(read);
+	if (read == 4)
+	{
+		system("cls");
+		cout << "\nYou have exited the game\n";
+		exit(0);
+	}
+}
+
+// functions for saving/loading game
+void SaveGame(char savesL) {
+
+	string fileName = "save";
+	fileName += savesL;
+
+	fstream save;
+	save.open(fileName + ".txt", ios::out);
+	if (save.is_open()) {
+		for (int i = 0; i < sdkS; i++)
+		{
+			for (int j = 0; j < sdkS; j++) {
+				save << c[i][j] << " ";
+			}
+		}
+		cout << "Your game has been saved!" << endl;
+		Sleep(1500);
+		save.close();
+	}
+
+	else {
+		cout << "File not saved!" << endl;
+	}
+}
+
+void LoadGame(char savesL) {
+
+	string fileName = "save";
+	fileName += savesL;
+
+	fstream load;
+	load.open(fileName + ".txt", ios::in);
+	if (load.is_open()) {
+		for (int i = 0; i < sdkS; i++)
+		{
+			for (int j = 0; j < sdkS; j++) {
+				load >> c[i][j];
+			}
+		}
+		cout << "File is being loaded" << endl;
+		Sleep(1500);
+		load.close();
+	}
+
+	else {
+		cout << "There is no save file!" << endl;
+	}
+
+system("cls");
+	display_game();
+}
