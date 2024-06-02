@@ -1,0 +1,83 @@
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+      flex-wrap:wrap;
+  }
+  
+  .body{
+    min-height:100vh;
+    
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+  }
+  
+
+  .card-wrapper {
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-blend-mode: darken;
+    width: calc(33.333% - 20px);
+    height: 700px;
+    color:white;
+    box-shadow: 5px 5px 15px; 
+    font-family: 'Abril Fatface', cursive;
+    order:1;
+    margin-top:50px;
+    border-radius: 30px; 
+    display: flex;
+  flex-direction: column; /* Align items in a column */
+  justify-content: center; /* Center items horizontally */
+  text-align: center; /* Center text content */
+  }
+  
+  .inner-card{
+    padding:2em;
+    flex-grow: 1;
+  }
+  
+  .more-info-btn{
+    display:flex;
+    justify-content:flex-end;
+  }
+  .btn-background{
+    background:white;
+    padding:.9em;
+    border-radius:50%;
+    font-size:20px;
+    color:black;
+  }
+  
+  #title{
+    font-size:50px;
+    margin-top:25px;
+  }
+  
+  #details{
+    display:flex;
+    justify-content:space-around;
+    gap: 4em;
+    margin-top:50px;
+  }
+  
+  .start-btn{
+    display:flex;
+    justify-content:center;
+    margin-top:290px;
+    margin-bottom: 20px;
+  }
+  .start-btn a{
+    background:white;
+    color:black;
+    padding:.6em;
+    width:200px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow: .5px 1px 5px;
+    text-decoration:none;
+  }
+  
+  .start-btn .fas{
+    margin-left:10px;
+  }
